@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FernieX - МиниИгры</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating particles background */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3.5em;
+            font-weight: 700;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3em;
+            font-weight: 300;
+        }
+
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card.active {
+            z-index: 1001;
+            transform: scale(1.05);
+        }
+
+        .game-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .game-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .game-description {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .play-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .play-button:active {
+            transform: scale(0.98);
+        }
+
+        .play-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            pointer-events: none;
+            z-index: 1000;
+            transition: background 0.8s ease;
+        }
+
+        .overlay.active {
+            background: rgba(0, 0, 0, 0.85);
+            pointer-events: all;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-size: 1.3em;
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+        }
+
+        .error-text {
+            color: #e74c3c;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .error {
+            display: none;
+            text-align: center;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .spinner {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .games-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background particles -->
+    <script>
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = Math.random() * 30 + 10 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = Math.random() * 10 + 10 + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="header">
+        <h1>FernieX - МиниИгры</h1>
+        <p>Коллекция увлекательных игр</p>
+    </div>
+
+    <div class="games-container">
+        <div class="game-card" id="gameCard">
+            <span class="game-icon">🎮</span>
+            <h2 class="game-title">FernieX-Block's</h2>
+            <p class="game-description">Захватывающая игра с блоками! Проверьте свою ловкость и реакцию.</p>
+            <button class="play-button" id="playButton" onclick="startGame()">
+                <span id="buttonText">Играть</span>
+            </button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Загрузка игры...</div>
+            </div>
+            <div class="error" id="error">
+                <div class="error-text">❌ Не удалось подключиться к игре</div>
+                <button class="play-button" style="margin-top: 20px;" onclick="resetGame()">
+                    <span>OK</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startGame() {
+            const gameCard = document.getElementById('gameCard');
+            const overlay = document.getElementById('overlay');
+            const playButton = document.getElementById('playButton');
+            const buttonText = document.getElementById('buttonText');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+
+            // Активировать оверлей
+            overlay.classList.add('active');
+            
+            // Увеличить карточку
+            gameCard.classList.add('active');
+
+            // Скрыть кнопку и показать загрузку
+            setTimeout(() => {
+                playButton.style.display = 'none';
+                loading.classList.add('active');
+            }, 500);
+
+            // Перенаправить на другой сайт через 2 секунды
+            setTimeout(() => {
+                // Замените "No Link" на реальный URL игры
+                const gameUrl = 'No Link';
+                
+                // Проверяем, есть ли ссылка на игру
+                if (gameUrl === 'No Link' || gameUrl === '' || !gameUrl) {
+                    // Показываем ошибку
+                    loading.classList.remove('active');
+                    error.classList.add('active');
+                } else {
+                    // Открываем игру
+                    window.location.href = gameUrl;
+                }
+            }, 2500);
+        }
+
+        function resetGame() {
+            const gameCard = document.getElementById('gameCard');
+            const overlay = document.getElementById('overlay');
+            const playButton = document.getElementById('playButton');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+
+            // Скрыть ошибку
+            error.classList.remove('active');
+            
+            // Убрать затемнение
+            overlay.classList.remove('active');
+            
+            // Вернуть карточку в нормальное состояние
+            gameCard.classList.remove('active');
+            
+            // Показать кнопку "Играть" снова
+            playButton.style.display = 'block';
+        }
+
+        // Добавить эффект наведения на карточки
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('active')) {
+                    this.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
