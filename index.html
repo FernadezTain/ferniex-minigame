@@ -750,7 +750,22 @@ function startGame(){hideAll();running=true;paused=false;stopLoop();gameLoop=set
 function stopLoop(){if(gameLoop){clearInterval(gameLoop);gameLoop=null;}}
 function tick(){dir={...nextDir};const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS||snake.some(s=>s.x===head.x&&s.y===head.y)){doGameOver();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score++;if(score>bestScore)bestScore=score;scoreDisplay.textContent=score;scoreDisplay.classList.remove('score-pop');void scoreDisplay.offsetWidth;scoreDisplay.classList.add('score-pop');food=spawnFood();}else{snake.pop();}draw();}
 function togglePause(){if(!running)return;paused=!paused;if(paused){stopLoop();document.getElementById('pause-score-sub').textContent=`Текущий счёт: ${score}`;showOnly(OL_PAUSE);}else{hideAll();gameLoop=setInterval(tick,115);}}
-function doGameOver(){stopLoop();running=false;document.getElementById('final-score-display').textContent=score;document.getElementById('best-score-display').textContent=bestScore>0?`Лучший результат: ${bestScore}`:'';showOnly(OL_GAMEOVER);}
+function doGameOver() {
+  stopLoop();
+  running = false;
+  document.getElementById('final-score-display').textContent = score;
+  document.getElementById('best-score-display').textContent =
+    bestScore > 0 ? `Лучший результат: ${bestScore}` : '';
+  showOnly(OL_GAMEOVER);
+
+  if (currentUser?.id) {
+    fetch(`${FERNIEID_API}/api/stats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUser.id, game: 'pixel_snake', score: score })
+    }).catch(() => {});
+  }
+}
 function drawBg(){ctx.fillStyle=C.bg;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.strokeStyle=C.grid;ctx.lineWidth=1;for(let x=0;x<=COLS;x++){ctx.beginPath();ctx.moveTo(x*CELL,0);ctx.lineTo(x*CELL,canvas.height);ctx.stroke();}for(let y=0;y<=ROWS;y++){ctx.beginPath();ctx.moveTo(0,y*CELL);ctx.lineTo(canvas.width,y*CELL);ctx.stroke();}}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
 function drawFood(){const fx=food.x*CELL+CELL/2,fy=food.y*CELL+CELL/2;const g=ctx.createRadialGradient(fx,fy,0,fx,fy,CELL*1.5);g.addColorStop(0,C.foodGlow);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(fx,fy,CELL*1.5,0,Math.PI*2);ctx.fill();const p=4;rr(food.x*CELL+p,food.y*CELL+p,CELL-p*2,CELL-p*2,5);ctx.fillStyle=C.food;ctx.fill();}
