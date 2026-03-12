@@ -97,6 +97,36 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
 @keyframes pulse{0%,100%{box-shadow:0 0 8px var(--p1);transform:scale(1);}50%{box-shadow:0 0 20px var(--p1);transform:scale(1.25);}}
 
+/* Telegram Link Banner */
+.tg-banner {
+  position: fixed; top: 80px; right: 20px; z-index: 200;
+  max-width: 320px; padding: 1.25rem 1.4rem;
+  background: rgba(20,15,32,0.85);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(180,141,255,0.25); border-radius: 18px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: fadeUp .4s ease both;
+  display: none;
+}
+.tg-banner.show { display: block; }
+.tg-banner-title { font-family:'Syne',sans-serif; font-size:.95rem; font-weight:700; margin-bottom:.4rem; }
+.tg-banner-sub { font-size:.78rem; color:var(--muted); margin-bottom:1rem; line-height:1.5; }
+.tg-banner-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 10px; border-radius: 12px; border: none; cursor: pointer;
+  font-family:'Inter',sans-serif; font-size:.82rem; font-weight:600;
+  background: linear-gradient(135deg, rgba(180,141,255,0.3), rgba(126,184,255,0.2));
+  border: 1px solid rgba(180,141,255,0.4); color: #fff;
+  box-shadow: 0 6px 20px rgba(180,141,255,0.2); transition: all .25s;
+}
+.tg-banner-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(180,141,255,0.3); }
+.tg-banner-close {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; font-size: .9rem; transition: color .2s;
+}
+.tg-banner-close:hover { color: var(--text); }
+
 /* ── HEADER ── */
 header{
   position:sticky;top:0;z-index:100;padding:0 2.5rem;height:66px;
@@ -577,7 +607,7 @@ document.getElementById('login-btn').onclick = async () => {
     const data = await res.json();
 
     if (data.success) {
-      saveSession({ id: data.userId, username });
+      saveSession({ id: data.userId, username, telegramLinked: data.telegramLinked });
       msg.style.color = 'var(--teal)';
       msg.textContent = '✓ Входим...';
       setTimeout(enterGames, 500);
@@ -663,6 +693,11 @@ function enterGames() {
   authPage.classList.remove('active');
   mainPage.classList.add('active');
   initTabbar();
+
+  // Показываем баннер если Telegram не привязан
+  if (!currentUser.telegramLinked) {
+    setTimeout(() => showTelegramLinkBanner(currentUser.id), 1500);
+  }
 }
 
 // ══════════════════════════════════════════
@@ -781,6 +816,38 @@ document.getElementById('restart-from-pause-btn').addEventListener('click',()=>{
 document.getElementById('restart-btn').addEventListener('click',()=>{initGame();startGame();});
 document.getElementById('claim-btn').addEventListener('click',()=>{window.open(`https://t.me/FernieXBot?start=PixelSnake_${score}`,'_blank');});
 document.getElementById('back-btn').addEventListener('click',closeSnake);
+
+// ── Показать баннер привязки Telegram ──
+async function showTelegramLinkBanner(userId) {
+  try {
+    const r = await fetch(`${FERNIEID_API}/api/telegram/generate-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId })
+    });
+    const d = await r.json();
+    if (!d.success) return;
+
+    const url = `https://t.me/FernieXBot?start=link_${d.token}`;
+    const banner = document.getElementById('tg-banner');
+    const btn = document.getElementById('tg-link-btn');
+
+    btn.onclick = () => window.open(url, '_blank');
+    banner.classList.add('show');
+  } catch (e) {
+    console.error('TG banner error:', e);
+  }
+}
+
 </script>
+<div class="tg-banner" id="tg-banner">
+  <button class="tg-banner-close" onclick="document.getElementById('tg-banner').classList.remove('show')">✕</button>
+  <div class="tg-banner-title">🔗 Привяжи Telegram</div>
+  <div class="tg-banner-sub">Чтобы получать награды за игры автоматически — привяжи свой Telegram аккаунт.</div>
+  <button class="tg-banner-btn" id="tg-link-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+    Привязать Telegram
+  </button>
+</div>
 </body>
 </html>
