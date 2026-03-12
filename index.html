@@ -694,12 +694,24 @@ function enterGames() {
   mainPage.classList.add('active');
   initTabbar();
 
-  // Показываем баннер если Telegram не привязан
+  updateTgPill(currentUser.telegramLinked);
+
   if (!currentUser.telegramLinked) {
     setTimeout(() => showTelegramLinkBanner(currentUser.id), 1500);
   }
 }
 
+function updateTgPill(linked) {
+  const el = document.getElementById('tg-pill-label');
+  if (!el) return;
+  if (linked) {
+    el.textContent = 'Telegram · Привязан';
+    el.style.color = 'var(--teal)';
+  } else {
+    el.textContent = 'Telegram · Привязать';
+    el.style.color = 'rgba(180,141,255,0.7)';
+  }
+}
 // ══════════════════════════════════════════
 //  ВЫХОД
 // ══════════════════════════════════════════
@@ -834,6 +846,7 @@ async function showTelegramLinkBanner(userId) {
 
     btn.onclick = () => window.open(url, '_blank');
     banner.classList.add('show');
+    setTimeout(() => banner.classList.remove('show'), 10000);
   } catch (e) {
     console.error('TG banner error:', e);
   }
