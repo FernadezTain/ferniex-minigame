@@ -686,6 +686,7 @@ function enterGames() {
   const authPage = document.getElementById('auth-page');
   const mainPage = document.getElementById('main-page');
   const initial  = (currentUser.username || '?')[0].toUpperCase();
+  const userId = currentUser.id || currentUser.userId;
 
   document.getElementById('header-avatar').textContent   = initial;
   document.getElementById('header-username').textContent = currentUser.username;
@@ -809,7 +810,7 @@ function doGameOver() {
     fetch(`${FERNIEID_API}/api/stats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: currentUser.id, game: 'pixel_snake', score: score })
+      body: JSON.stringify({ userId: currentUser.id, gameSlug: 'pixel-snake', score: score })
     }).catch(() => {});
   }
 }
