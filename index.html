@@ -607,7 +607,7 @@ document.getElementById('login-btn').onclick = async () => {
     const data = await res.json();
 
     if (data.success) {
-      saveSession({ id: data.userId, username, telegramLinked: data.telegramLinked });
+      saveSession({ id: data.userId, userId: data.userId, username, telegramLinked: data.telegramLinked });
       msg.style.color = 'var(--teal)';
       msg.textContent = '✓ Входим...';
       setTimeout(enterGames, 500);
@@ -810,7 +810,7 @@ function doGameOver() {
     fetch(`${FERNIEID_API}/api/stats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: currentUser.id, gameSlug: 'pixel-snake', score: score })
+      body: JSON.stringify({ userId: currentUser.id, game: 'pixel-snake', score: score })
     }).catch(() => {});
   }
 }
