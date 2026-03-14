@@ -588,7 +588,6 @@ footer::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;ba
         <div class="overlay-score" id="final-score-display"></div>
         <div class="overlay-best" id="best-score-display"></div>
         <div style="display:flex;flex-direction:column;gap:.5rem;width:180px;position:relative;z-index:2">
-          <button class="start-btn" id="claim-btn">🎁 Получить награду</button>
           <button class="start-btn secondary-btn" id="restart-btn">↺ Сыграть снова</button>
         </div>
       </div>
@@ -982,7 +981,6 @@ document.getElementById('start-btn').addEventListener('click',()=>{initGame();st
 document.getElementById('resume-btn').addEventListener('click',togglePause);
 document.getElementById('restart-from-pause-btn').addEventListener('click',()=>{initGame();startGame();});
 document.getElementById('restart-btn').addEventListener('click',()=>{initGame();startGame();});
-document.getElementById('claim-btn').addEventListener('click',()=>{window.open(`https://t.me/FernieXBot?start=PixelSnake_${score}`,'_blank');});
 document.getElementById('back-btn').addEventListener('click',closeSnake);
 
 // ── TG BANNER ──
