@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FernieX-Block's - Puzzle Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🧩</div>
+                <h1 class="title">FernieX Block's</h1>
+            </div>
+            <div class="score-container">
+                <div class="score-label">СЧЁТ</div>
+                <div class="score-value" id="score">0</div>
+            </div>
+        </header>
+
+        <main class="game-container">
+            <div class="game-board-wrapper">
+                <div class="high-score">
+                    <span class="high-score-icon">👑</span>
+                    <span>Рекорд: <span id="highScore">0</span></span>
+                </div>
+                
+                <div class="game-board" id="gameBoard">
+                    <!-- 8x8 сетка будет создана JS -->
+                </div>
+
+                <div class="combo-display hidden" id="comboDisplay">
+                    <div class="combo-text">КОМБО!</div>
+                    <div class="combo-multiplier" id="comboMultiplier">x2</div>
+                </div>
+            </div>
+
+            <div class="pieces-container">
+                <div class="pieces-title">ВЫБЕРИТЕ ФИГУРУ</div>
+                <div class="pieces-grid" id="piecesGrid">
+                    <!-- 3 фигуры будут созданы JS -->
+                </div>
+            </div>
+        </main>
+
+        <div class="game-over-modal hidden" id="gameOverModal">
+            <div class="modal-backdrop" id="modalBackdrop"></div>
+            <div class="modal-content">
+                <div class="modal-icon">💥</div>
+                <h2 class="modal-title">ИГРА ОКОНЧЕНА!</h2>
+                <div class="final-score-container">
+                    <div class="final-score-label">Ваш счёт</div>
+                    <div class="final-score-value" id="finalScore">0</div>
+                </div>
+                <div class="high-score-badge hidden" id="newHighScore">
+                    🎉 НОВЫЙ РЕКОРД! 🎉
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-reward" id="rewardBtn">
+                        <span class="btn-icon">🎁</span>
+                        ПОЛУЧИТЬ НАГРАДУ
+                    </button>
+                    <button class="btn-restart" id="restartBtn">
+                        <span class="btn-icon">🔄</span>
+                        ИГРАТЬ СНОВА
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="clearedLines">0</div>
+                        <div class="stat-label">Линий</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="maxCombo">0</div>
+                        <div class="stat-label">Макс комбо</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="piecesPlaced">0</div>
+                        <div class="stat-label">Фигур</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
