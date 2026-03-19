@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CodeQuest 🧩</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════ MENU SCREEN ═══════════════ -->
+<div id="menuScreen" class="screen active">
+  <div class="menu-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="grid-lines"></div>
+  </div>
+  <div class="menu-content">
+
+    <!-- Logo -->
+    <div class="menu-logo">
+      <div class="logo-icon">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <rect width="56" height="56" rx="16" fill="url(#lg)"/>
+          <path d="M18 20L12 28L18 36" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M38 20L44 28L38 36" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M24 38L32 18" stroke="#43e97b" stroke-width="3" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6c63ff"/>
+              <stop offset="1" stop-color="#9b59b6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h1 class="logo-text">CodeQuest</h1>
+      <p class="logo-sub" id="logoSub">Учи код, играя</p>
+    </div>
+
+    <!-- Language Selection -->
+    <div class="lang-select-section">
+      <div class="lang-select-label">Выбери язык программирования</div>
+      <div class="lang-buttons">
+        <button class="lang-btn active" data-lang="python" onclick="selectLang('python')">
+          <span class="lang-btn-icon">🐍</span>
+          <span class="lang-btn-name">Python</span>
+          <span class="lang-btn-count">100 задач</span>
+        </button>
+        <button class="lang-btn" data-lang="csharp" onclick="selectLang('csharp')">
+          <span class="lang-btn-icon">💜</span>
+          <span class="lang-btn-name">C#</span>
+          <span class="lang-btn-count">100 задач</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="menu-stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-val" id="menuBestScore">—</div>
+        <div class="stat-lbl">Рекорд</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎮</div>
+        <div class="stat-val" id="menuGamesPlayed">0</div>
+        <div class="stat-lbl">Игр сыграно</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" id="langIcon">🐍</div>
+        <div class="stat-val">100</div>
+        <div class="stat-lbl">Уровней</div>
+      </div>
+    </div>
+
+    <!-- How to play -->
+    <div class="menu-how">
+      <div class="how-item"><span class="how-icon">👆</span><span>Нажми или перетащи блок кода</span></div>
+      <div class="how-item"><span class="how-icon">✅</span><span>Проверь ответ</span></div>
+      <div class="how-item"><span class="how-icon">⭐</span><span>Меньше ошибок — больше очков</span></div>
+    </div>
+
+    <!-- Play button -->
+    <button class="btn-play" onclick="startGame()">
+      <span class="btn-play-inner">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polygon points="6,3 20,12 6,21" fill="white"/></svg>
+        Играть
+      </span>
+      <div class="btn-play-glow"></div>
+    </button>
+
+    <div class="menu-footer">10 случайных уровней из 100</div>
+  </div>
+</div>
+
+<!-- ═══════════════ GAME SCREEN ═══════════════ -->
+<div id="gameScreen" class="screen">
+  <div class="game-header">
+    <button class="btn-back" onclick="goMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="hdr-progress">
+      <div class="hdr-progress-bar" id="hdrProgressBar"></div>
+      <span class="hdr-progress-txt" id="hdrProgressTxt">1 / 10</span>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-score">⭐ <span id="hdrScore">0</span></div>
+      <div class="hearts-row" id="heartsRow">
+        <span>❤️</span><span>❤️</span><span>❤️</span>
+      </div>
+    </div>
+  </div>
+  <div class="game-body" id="gameBody"></div>
+</div>
+
+<!-- ═══════════════ RESULT SCREEN ═══════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+  </div>
+  <div class="result-content">
+    <div class="result-trophy" id="resultTrophy">🏆</div>
+    <h2 class="result-title" id="resultTitle">Игра завершена!</h2>
+    <p class="result-sub" id="resultSub">Ты прошёл все 10 уровней</p>
+    <div class="result-lang-badge" id="resultLangBadge">🐍 Python</div>
+    <div class="result-stats">
+      <div class="rstat">
+        <div class="rstat-val" id="rScore">0</div>
+        <div class="rstat-lbl">Очков</div>
+      </div>
+      <div class="rstat">
+        <div class="rstat-val" id="rErrors">0</div>
+        <div class="rstat-lbl">Ошибок</div>
+      </div>
+      <div class="rstat">
+        <div class="rstat-val" id="rPerfect">0</div>
+        <div class="rstat-lbl">Без ошибок</div>
+      </div>
+    </div>
+    <div class="result-rank" id="resultRank"></div>
+    <button class="btn-reward" onclick="claimReward()">
+      🎁 Получить награду
+    </button>
+    <div class="result-actions">
+      <button class="btn-secondary" onclick="startGame()">🔄 Ещё раз</button>
+      <button class="btn-secondary" onclick="goMenu()">🏠 Меню</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script src="game.js"></script>
+</body>
+</html>
