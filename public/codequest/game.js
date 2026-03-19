@@ -1,7 +1,12 @@
 /* ═══════════════════════════════════════════
    CODEQUEST — game.js (multi-language edition)
 ═══════════════════════════════════════════ */
-
+// В начале game.js добавь
+const FERNIEID_API = 'https://ferniex-id.vercel.app';
+let currentUser = null;
+try {
+  currentUser = JSON.parse(sessionStorage.getItem('ag_user') || 'null');
+} catch(_) {}
 // ──────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────
@@ -497,15 +502,21 @@ function showResultScreen() {
 // CLAIM REWARD
 // ──────────────────────────────────────────
 function claimReward() {
-  const payload = `codeQuest_${currentLang}_${totalScore}_${perfectLevels}_${totalErrors}`;
+  const user = JSON.parse(sessionStorage.getItem('ag_user') || 'null');
+  if (!user) { goMenu(); return; }
 
-  const url = `https://t.me/FernieXBot?start=${payload}`;
-  window.open(url, '_blank');
+  fetch('https://ferniex-id.vercel.app/api/stats', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: user.id || user.userId,
+      game: 'codequest-' + currentLang,
+      score: totalScore
+    })
+  }).catch(() => {});
 
-  saveStats(currentLang, totalScore);
   goMenu();
 }
-
 // ──────────────────────────────────────────
 // HELPERS
 // ──────────────────────────────────────────
