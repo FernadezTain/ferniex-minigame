@@ -765,7 +765,7 @@ if(window.matchMedia('(pointer:fine)').matches){
 }
 
 // ── PLAY BUTTONS ──
-const gameLinks={"FernieX-Block's":'https://ferniex-game-bloks.vercel.app/','CodeQuests':'/codequest/'};
+const gameLinks={"FernieX-Block's":'https://ferniex-game-bloks.vercel.app/','CodeQuests':'https://ferniex-game-codequest.vercel.app/'};
 document.querySelectorAll('.play-btn').forEach(btn=>{
   btn.addEventListener('click',e=>{
     e.stopPropagation();
@@ -774,6 +774,7 @@ document.querySelectorAll('.play-btn').forEach(btn=>{
     else if(card.dataset.game==='ext'&&gameLinks[name])window.open(gameLinks[name],'_blank');
   });
 });
+
 // ══════════════════════════════════════════
 //  SNAKE GAME
 // ══════════════════════════════════════════
