@@ -1,6 +1,8 @@
 {
   "rewrites": [
-    { "source": "/codequest/(.*)", "destination": "/public/codequest/$1" },
-    { "source": "/codequest", "destination": "/public/codequest/index.html" }
+    { "source": "/codequest/(.*)", "destination": "/codequest/$1" },
+    { "source": "/codequest", "destination": "/codequest/index.html" },
+    { "source": "/bloks/(.*)", "destination": "/bloks/$1" },
+    { "source": "/bloks", "destination": "/bloks/index.html" }
   ]
 }
