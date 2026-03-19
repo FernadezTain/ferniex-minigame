@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/codequest/(.*)", "destination": "/public/codequest/$1" },
+    { "source": "/codequest", "destination": "/public/codequest/index.html" }
+  ]
+}
