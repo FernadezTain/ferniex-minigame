@@ -680,8 +680,10 @@ document.getElementById('login-btn').onclick=async()=>{
   if(!username||!password){msg.textContent='Заполни все поля';return;}
   document.getElementById('login-btn').disabled=true;
   msg.style.color='var(--muted)';msg.textContent='Проверяем...';
+  let clientIp='неизвестен';
+  try{const r=await fetch('https://api.ipify.org?format=json');const d=await r.json();clientIp=d.ip;}catch{}
   try{
-    const res=await fetch(`${FERNIEID_API}/api/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const res=await fetch(`${FERNIEID_API}/api/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password,clientIp,userAgent:navigator.userAgent})});
     const data=await res.json();
     if(data.success){saveSession({id:data.userId,userId:data.userId,username,telegramLinked:data.telegramLinked});msg.style.color='var(--teal)';msg.textContent='✓ Входим...';setTimeout(enterGames,500);}
     else{msg.style.color='var(--red)';msg.textContent=data.error||'✗ Неверный логин или пароль';}
